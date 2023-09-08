@@ -14,6 +14,7 @@ import postRoutes from "./routes/posts.js";
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
+import {v2 as cloudinary} from "cloudinary";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
@@ -32,16 +33,24 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
+/*CLOUDINARY CONFIG*/
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
 /* FILE STORAGE */
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/assets");
-  },
+  // destination: function (req, file, cb) {
+  //   cb(null, "public/assets");
+  // },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
-  },
+  }
 });
 const upload = multer({ storage });
+
 
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);

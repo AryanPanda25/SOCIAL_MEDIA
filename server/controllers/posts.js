@@ -4,6 +4,19 @@ import User from "../models/User.js";
 /* CREATE */
 export const createPost = async (req, res) => {
   try {
+    cloudinary.uploader.upload(req.file.path,(err,result)=>{
+      if(err){
+        return res.status(500).json({
+          success:false,
+          message:"error"
+        })
+      }
+      res.status(200).json({
+        success:true,
+        message:"uploaded",
+        data: result
+      })
+    })
     const { userId, description, picturePath } = req.body;
     const user = await User.findById(userId);
     const newPost = new Post({
